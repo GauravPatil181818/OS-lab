@@ -1,0 +1,54 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int m, p;
+    cout << "Enter number of memory blocks: ";
+    cin >> m;
+    int block[m];
+    cout << "Enter sizes of blocks:\n";
+    for (int i = 0; i < m; i++)
+        cin >> block[i];
+
+    cout << "Enter number of processes: ";
+    cin >> p;
+    int process[p];
+    cout << "Enter sizes of processes:\n";
+    for (int i = 0; i < p; i++)
+        cin >> process[i];
+
+    int alloc[p];
+    for (int i = 0; i < p; i++) {
+        alloc[i] = -1;
+        for (int j = 0; j < m; j++) {
+            if (block[j] >= process[i]) {
+                alloc[i] = j;
+                block[j] -= process[i];
+                break;
+            }
+        }
+    }
+
+    cout << "\nProcess No.\tProcess Size\tBlock No.\n";
+    for (int i = 0; i < p; i++) {
+        cout << i + 1 << "\t\t" << process[i] << "\t\t";
+        if (alloc[i] != -1)
+            cout << alloc[i] + 1 << "\n";
+        else
+            cout << "Not Allocated\n";
+    }
+
+    return 0;
+}
+Enter number of memory blocks: 3
+Enter sizes of blocks:
+100 500 200
+Enter number of processes: 4
+Enter sizes of processes:
+212 417 112 426
+
+Process No.	Process Size	Block No.
+1		212		2
+2		417		Not Allocated
+3		112		3
+4		426		Not Allocated
