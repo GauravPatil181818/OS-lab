@@ -1,0 +1,61 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int at[100], bt[100], rt[100], pr[100]; // Arrival, Burst, Remaining, Priority
+    int ct[100], tat[100], wt[100];
+    bool done[100] = {false};
+
+    for (int i = 0; i < n; i++) {
+        cout << "Enter AT, BT, Priority for P" << i + 1 << ": ";
+        cin >> at[i] >> bt[i] >> pr[i];
+        rt[i] = bt[i];
+    }
+
+    int time = 0, completed = 0;
+
+    while (completed < n) {
+        int idx = -1, highest = 1e9;
+
+        for (int i = 0; i < n; i++) {
+            if (at[i] <= time && rt[i] > 0 && pr[i] < highest) {
+                highest = pr[i];
+                idx = i;
+            }
+        }
+
+        if (idx != -1) {
+            rt[idx]--;
+            time++;
+
+            if (rt[idx] == 0) {
+                completed++;
+                ct[idx] = time;
+                tat[idx] = ct[idx] - at[idx];
+                wt[idx] = tat[idx] - bt[idx];
+                done[idx] = true;
+            }
+        } else {
+            time++;
+        }
+    }
+
+    cout << "\nP\tAT\tBT\tPR\tCT\tTAT\tWT\n";
+    for (int i = 0; i < n; i++)
+        cout << "P" << i + 1 << "\t" << at[i] << "\t" << bt[i] << "\t" << pr[i]
+             << "\t" << ct[i] << "\t" << tat[i] << "\t" << wt[i] << "\n";
+
+    return 0;
+}
+Enter number of processes: 3
+Enter AT, BT, Priority for P1: 0 5 2
+Enter AT, BT, Priority for P2: 1 3 1
+Enter AT, BT, Priority for P3: 2 2 3
+P	AT	BT	PR	CT	TAT	WT
+P1	0	5	2	8	8	3
+P2	1	3	1	4	3	0
+P3	2	2	3	10	8	6
