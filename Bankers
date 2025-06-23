@@ -1,0 +1,88 @@
+#include <iostream>
+using namespace std;
+
+const int MAX = 10;
+
+int main() {
+    int n, m;
+    cout << "Enter number of processes: ";
+    cin >> n;
+    cout << "Enter number of resources: ";
+    cin >> m;
+
+    int alloc[MAX][MAX], maxNeed[MAX][MAX], avail[MAX], need[MAX][MAX];
+    bool finish[MAX] = {false};
+    int safeSeq[MAX];
+
+    cout << "Enter Allocation Matrix:\n";
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            cin >> alloc[i][j];
+
+    cout << "Enter Max Need Matrix:\n";
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            cin >> maxNeed[i][j];
+
+    cout << "Enter Available Resources:\n";
+    for (int j = 0; j < m; j++)
+        cin >> avail[j];
+
+    // Calculate Need Matrix
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            need[i][j] = maxNeed[i][j] - alloc[i][j];
+
+    int count = 0;
+    while (count < n) {
+        bool found = false;
+        for (int i = 0; i < n; i++) {
+            if (!finish[i]) {
+                bool canAllocate = true;
+                for (int j = 0; j < m; j++) {
+                    if (need[i][j] > avail[j]) {
+                        canAllocate = false;
+                        break;
+                    }
+                }
+
+                if (canAllocate) {
+                    for (int j = 0; j < m; j++)
+                        avail[j] += alloc[i][j];
+
+                    safeSeq[count++] = i;
+                    finish[i] = true;
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            cout << "System is not in a safe state.\n";
+            return 0;
+        }
+    }
+
+    cout << "System is in a safe state.\nSafe sequence: ";
+    for (int i = 0; i < n; i++)
+        cout << "P" << safeSeq[i] << (i == n - 1 ? "\n" : " -> ");
+
+    return 0;
+}
+
+Enter number of processes: 5
+Enter number of resources: 3
+Enter Allocation Matrix:
+0 1 0
+2 0 0
+3 0 2
+2 1 1
+0 0 2
+Enter Max Need Matrix:
+7 5 3
+3 2 2
+9 0 2
+2 2 2
+4 3 3
+Enter Available Resources:
+3 3 2
